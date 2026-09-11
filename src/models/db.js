@@ -4,7 +4,9 @@ import { Pool } from 'pg';
 //CREA LA CONFIGURACION DEL POOL
 const pool = new Pool({
   connectionString: process.env.DB_URL,
-  ssl: true
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 //DECLARA LA VARIABLE DE EXPORTACION
