@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === 'development' && process.env.ENABLE_SQL_LOGGING ===
         const start = Date.now();
         const res = await pool.query(text, params);
         const duration = Date.now() - start;
-        console.log('Excuted query:', {
+        console.log('Executed query:', {
           text: text.replace(/\s+/g, ' ').trim(),
           duration: `${duration}ms`,
           rows: res.rowCount
@@ -55,7 +55,7 @@ const testConnection = async () => {
     console.log('Database connection successful:', result.rows[0].current_time);
     return true;
   } catch (error) {
-    console.error('Databse connection failed:', error.message);
+    console.error('Database connection failed:', error.message);
     throw error;
   }
 };
