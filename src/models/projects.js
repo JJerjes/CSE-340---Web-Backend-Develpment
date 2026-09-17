@@ -5,6 +5,8 @@ const getAllProjects = async () => {
   const query = `
     SELECT
       p.project_id,
+      p.organization_id,
+      p.category_id,
       p.title,
       p.description,
       p.location,
