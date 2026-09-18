@@ -11,12 +11,14 @@ CREATE TABLE IF NOT EXISTS category (
 );
 CREATE TABLE IF NOT EXISTS project (
   project_id SERIAL PRIMARY KEY,
-  organization_id INT REFERENCES organization(organization_id) ON DELETE CASCADE,
-  category_id INT REFERENCES category(category_id) ON DELETE CASCADE,
+  organization_id INT NOT NULL,
+  category_id INT NOT NULL,
   title VARCHAR(250) NOT NULL,
   description TEXT,
   location VARCHAR(250) NOT NULL,
-  date DATE NOT NULL
+  date DATE NOT NULL,
+  CONSTRAINT fk_organization FOREIGN KEY (organization_id) REFERENCES organization(organization_id) ON DELETE CASCADE,
+  CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
 );
 INSERT INTO organization (name, description, contact_email, logo_filename)
 VALUES (
