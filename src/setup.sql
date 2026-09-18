@@ -5,22 +5,18 @@ CREATE TABLE IF NOT EXISTS organization (
   contact_email VARCHAR(250),
   logo_filename VARCHAR(250)
 );
-CREATE TABLE IF NOT EXISTS project (
-  project_id SERIAL PRIMARY KEY,
-  organization_id INT REFERENCES organization(organization_id) ON DELETE CASCADE,
-  title VARCHAR(250) NOT NULL,
-  description TEXT,
-  location VARCHAR(250) NOT NULL,
-  date DATE NOT NULL
-);
 CREATE TABLE IF NOT EXISTS category (
   category_id SERIAL PRIMARY KEY,
   category_name VARCHAR(250) NOT NULL UNIQUE
 );
-CREATE TABLE IF NOT EXISTS project_category (
-  project_id INT REFERENCES project(project_id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS project (
+  project_id SERIAL PRIMARY KEY,
+  organization_id INT REFERENCES organization(organization_id) ON DELETE CASCADE,
   category_id INT REFERENCES category(category_id) ON DELETE CASCADE,
-  PRIMARY KEY (project_id, category_id)
+  title VARCHAR(250) NOT NULL,
+  description TEXT,
+  location VARCHAR(250) NOT NULL,
+  date DATE NOT NULL
 );
 INSERT INTO organization (name, description, contact_email, logo_filename)
 VALUES (
@@ -41,8 +37,13 @@ VALUES (
     'hello@unityserve.org',
     'unityserve-logo.png'
   ) ON CONFLICT (name) DO NOTHING;
+INSERT INTO category (category_name)
+VALUES ('Environment'),
+  ('Community Service'),
+  ('Education') ON CONFLICT (category_name) DO NOTHING;
 INSERT INTO project (
     organization_id,
+    category_id,
     title,
     description,
     location,
@@ -50,6 +51,7 @@ INSERT INTO project (
   )
 VALUES (
     1,
+    2,
     'Access Ramp Construction',
     'Installation of a wooden ramp for the community center.',
     '123 Main Street',
@@ -57,6 +59,7 @@ VALUES (
   ),
   (
     1,
+    2,
     'School Roof Repair',
     'Preventive maintenance before the rainy season.',
     '456 Central Ave',
@@ -64,6 +67,7 @@ VALUES (
   ),
   (
     1,
+    2,
     'Facade Painting',
     'Restoration of exterior paint at the neighborhood park.',
     '789 Los Olivos St',
@@ -71,12 +75,14 @@ VALUES (
   ),
   (
     1,
+    2,
     'Bench Restoration',
     'Sanding and varnishing of local park benches.',
     'Main Square',
     '2026-12-01'
   ),
   (
+    1,
     1,
     'Urban Garden Construction',
     'Assembly of wooden raised garden beds.',
@@ -85,6 +91,7 @@ VALUES (
   ),
   (
     2,
+    1,
     'Home Composting Workshop',
     'Training on organic waste management.',
     'Eco Park',
@@ -92,6 +99,7 @@ VALUES (
   ),
   (
     2,
+    1,
     'Native Tree Planting',
     'Community reforestation day.',
     'Green Hills',
@@ -99,6 +107,7 @@ VALUES (
   ),
   (
     2,
+    1,
     'School Garden Cleanup',
     'Weed removal and soil preparation.',
     'Elementary School #12',
@@ -106,6 +115,7 @@ VALUES (
   ),
   (
     2,
+    1,
     'Vertical Garden Workshop',
     'Teaching cultivation in small spaces.',
     'North Community Center',
@@ -113,6 +123,7 @@ VALUES (
   ),
   (
     2,
+    1,
     'Seed Collection',
     'Sorting and packaging seeds for the community.',
     'Central Greenhouse',
@@ -120,12 +131,14 @@ VALUES (
   ),
   (
     3,
+    2,
     'Non-Perishable Food Drive',
     'Sorting donations for soup kitchens.',
     'Municipal Gym',
     '2026-10-12'
   ),
   (
+    3,
     3,
     'Children Reading Day',
     'Accompanying children at the public library.',
@@ -134,12 +147,14 @@ VALUES (
   ),
   (
     3,
+    2,
     'Blanket and Quilt Delivery',
     'Distribution of warm clothes for senior citizens.',
     'San Jose Nursing Home',
     '2026-11-05'
   ),
   (
+    3,
     3,
     'Digital Skills Workshop',
     'Teaching basic computer usage.',
@@ -148,19 +163,9 @@ VALUES (
   ),
   (
     3,
+    2,
     'Board Game Afternoon',
     'Integration activity for youth.',
     'Youth Center',
     '2026-12-10'
   ) ON CONFLICT DO NOTHING;
-INSERT INTO category (category_name)
-VALUES ('Environment'),
-  ('Community Service'),
-  ('Education') ON CONFLICT (category_name) DO NOTHING;
-INSERT INTO project_category (project_id, category_id)
-VALUES (1, 2),
-  (2, 2),
-  (6, 1),
-  (7, 1),
-  (12, 3),
-  (14, 3) ON CONFLICT DO NOTHING;
