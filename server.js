@@ -2,7 +2,7 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { testConnection } from './src/models/db.js';
-import routes from './src/routes.js'; 
+import router from './src/routes.js'; 
 
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 const PORT = process.env.PORT || 3000;
@@ -29,45 +29,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.get('/', async (req, res) => {
-//   const title = 'Home';
-//   res.render('home', { title });
-// });
-
-// app.get('/projects', async (req, res) => {
-//   const projects = await getAllProjects();
-//   // console.log(projects);
-
-//   const title = 'Service Projects';
-//   res.render('projects', { title, projects });
-// });
-
-// app.get('/categories', async (req, res) => {
-//   try {
-//     const categories = await getAllCategories();
-//     const title = 'Service Categories';
-//     res.render('categories', { title, categories });
-
-//   } catch (error) {
-//     console.error('Error fetching categories:', error);
-//     res.status(500).send('Server Error');
-//   }
-// });
-
-app.use(routes);
-
-app.get('/test-error', (req, res, next) => {
-  const err = new Error('This is a test error');
-  err.status = 500;
-  next(err);
-});
+app.use(router);
 
 app.use((req, res, next) => {
   const err = new Error('Page Not Found');
   err.status = 404;
   next(err);
 });
-
 
 app.use((err, req, res, next) => {
   console.error('Error occurred:', err.message)
