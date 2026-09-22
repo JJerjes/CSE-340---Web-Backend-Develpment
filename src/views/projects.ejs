@@ -7,18 +7,14 @@
   <ul>
     <% projects.forEach(project => { %>
       <li>
-        <strong><%= new Date(project.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) %>:</strong> <%= project.title %> (<%= project.organization_name %>)
+        <strong><%= new Date(project.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) %>:</strong> 
+        <a href="/project/<%= project.project_id %>">
+          <%= project.title %>
+        </a> 
+        (<%= project.organization_name %>)
       </li>
     <% }); %>    
   </ul>
 </main>
 
 <%- include('partials/footer') %>
-
-<!-- <li>
-  Park Cleanup - Join us to clean up local parks and make them beautiful!
-</li>
-<li>Food Drive - Help collect and distribute food to those in need.</li>
-<li>
-  Community Tutoring - Volunteer to tutor students in various subjects.
-</li> -->

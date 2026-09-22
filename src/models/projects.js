@@ -41,5 +41,22 @@ const getProjectsByOrganizationId = async (organizationId) => {
   return result.rows;
 }
 
-export { getAllProjects, getProjectsByOrganizationId };
+const getProjectsByCategoryId = async (categoryId) => {
+  try {
+    const sql = `
+      SELECT sp.project_id, sp.title, sp.description, sp.location, sp.project_date, o.name AS organization_name
+      FROM service_project sp
+      JOIN project_category pc ON sp.project_id = pc.project_id
+      JOIN organization o ON sp.organization_id = o.organization_id
+      WHERE pc.category_id = $1
+    `;
+    const result = await db.query(sql, [categoryId]);
+    return result.rows;
+  } catch (error) {
+    console.error('getProjectsByCategoryId error: ' + error);
+    throw error;
+  }
+};
+
+export { getAllProjects, getProjectsByOrganizationId, getProjectsByCategoryId };
 
