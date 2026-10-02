@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<!-- src/views/new-category.ejs -->
+<main class="container">
+  <h1>Add New Category</h1>
+
+  <!-- Flash Messages Display -->
+  <% if (typeof messages !== 'undefined' && messages && messages.error) { %>
+    <div class="alert alert-danger">
+      <%= messages.error %>
+    </div>
+  <% } %>
+
+  <form action="/new-category" method="POST">
+    <div class="form-group">
+      <label for="category_name">Category Name:</label>
+      <input 
+        type="text" 
+        id="category_name" 
+        name="category_name" 
+        class="form-control"
+        value="<%= typeof category_name !== 'undefined' ? category_name : '' %>"
+        required 
+        maxlength="100"
+      >
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Category</button>
+    <a href="/categories" class="btn btn-secondary">Cancel</a>
+  </form>
+</main>
+
+<%- include('partials/footer') %>

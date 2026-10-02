@@ -1,4 +1,5 @@
 import express from 'express';
+import { body } from 'express-validator';
 
 import {
   showHomePage
@@ -28,7 +29,11 @@ import {
   showCategoriesPage,
   showCategoryDetailPage,
   showAssignCategoriesForm,
-  processAssignCategoriesForm
+  processAssignCategoriesForm,
+  renderNewCategory,
+  handleNewCategory,
+  renderEditCategory,
+  handleUpdateCategory
 } from './controllers/categories.js';
 
 import {
@@ -36,6 +41,15 @@ import {
 } from './controllers/errors.js';
 
 const router = express.Router();
+
+const categoryValidation = [
+  body('category_name')
+    .trim()
+    .notEmpty()
+    .withMessage('Category name is required.')
+    .isLength({ min: 3, max: 100 })
+    .withMessage('Category name must be at least 3 characters long.')
+];
 
 router.get('/', showHomePage);
 router.get('/organizations', showOrganizationsPage);
@@ -62,7 +76,17 @@ router.post('/edit-project/:id', projectValidation, processEditProjectForm);
 router.get('/assign-categories/:projectId', showAssignCategoriesForm);
 router.post('/assign-categories/:projectId', processAssignCategoriesForm);
 
+//Rutas de categorias
 router.get('/categories', showCategoriesPage);
+
+//Rutas para crear categoria
+router.get('/new-category', renderNewCategory);
+router.post('/new-category', categoryValidation, handleNewCategory);
+
+//Rutas para editar categoria
+router.get('/edit-category/:id', renderEditCategory);
+router.post('/edit-category/:id', categoryValidation, handleUpdateCategory);
+
 router.get('/category/:id', showCategoryDetailPage); 
 
 // error-handling routes

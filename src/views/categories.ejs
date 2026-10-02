@@ -2,6 +2,8 @@
 
 <main>
   <h1><%= title %></h1>
+  
+  <a href="/new-category" class="btn btn-primary">Add New Category</a>
 
   <ul>
     <% categories.forEach(category => { %>
@@ -9,9 +11,28 @@
         <a href="/category/<%= category.category_id %>">
           <%= category.category_name %>
         </a>
+
+        <a href="/edit-category/<%= category.category_id %>" class="btn btn-secondary btn-sm">Edit Category</a>
       </li>
     <% }) %>
   </ul>
+
 </main>
 
 <%- include('partials/footer') %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

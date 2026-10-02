@@ -22,6 +22,28 @@ const getCategoryById = async (categoryId) => {
   }
 };
 
+const insertCategory = async (categoryName) => {
+  try {
+    const sql = 'INSERT INTO category (category_name) VALUES ($1) RETURNING *';
+    const result = await db.query(sql, [categoryName]);
+    return result.rows[0];
+  } catch (error) {
+    console.error('insertCategory error: ' + error);
+    throw error;
+  }
+};
+
+const updateCategory = async (categoryId, categoryName) => {
+  try {
+    const sql = 'UPDATE category SET category_name = $1 WHERE category_id = $2 RETURNING *';
+    const result = await db.query(sql, [categoryName, categoryId]);
+    return result.rows[0];
+  } catch (error) {
+    console.error('updateCategory error: ' + error);
+    throw error;
+  }
+}
+
 // 3. Recuperar todas las categorías de un proyecto dado
 const getCategoriesByProjectId = async (projectId) => {
   try {
@@ -63,6 +85,8 @@ const updateCategoryAssignments = async (projectId, categoryIds) => {
 export {
   getAllCategories,
   getCategoryById,
+  insertCategory,
+  updateCategory,
   getCategoriesByProjectId,
-  updateCategoryAssignments
+  updateCategoryAssignments,
 };
