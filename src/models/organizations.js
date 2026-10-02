@@ -1,23 +1,16 @@
-// IMPORTA LA CONEXION A LA BASE DE DATOS DESDE EL ARCHIVO db.js
 import db from './db.js';
 
-// DEFINE UNA FUNCION ASINCRONA QUE CONSULTA LA BASE DE DATOS DE TODAS LAS ORGANIZACIONES
 const getAllOrganizations = async () => {
 
-  // GUARDA EN UNA VARIABLE LA ORDEN EN LENGUAJE SQL PARA PEDIR LOS DATOS
   const query = `
     SELECT organization_id, name, description, contact_email, logo_filename
     FROM public.organization;
   `;
 
-  // LE ENVIA LA ORDEN A POSTGRESQL Y ESPERA (AWAIT) A QUE LLEGUEN LOS RESULTADOS
   const result = await db.query(query);
-
-  // DEVUELVE LAS FILAS DEL RESULTADO SI TIENE EXITO
   return result.rows;
 };
 
-// RECUPERA LOS DETALLES DE UNA ORGANIZACIÓN ESPECÍFICA MEDIANTE SU ID (USANDO CONSULTA PARAMETRIZADA $1)
 const getOrganizationDetails = async (organizationId) => {
   const query = `
     SELECT
@@ -32,10 +25,51 @@ const getOrganizationDetails = async (organizationId) => {
 
   const queryParams = [organizationId];
   const result = await db.query(query, queryParams);
-
-  // DEVUELVE LA PRIMERA FILA SI EXISTE, O NULL SI NO SE ENCUENTRA LA ORGANIZACIÓN
   return result.rows.length > 0 ? result.rows[0] : null;
 };
 
+const createOrganization = async (name, description, contactEmail, logoFilename) => {
+  const query = `
+    INSERT INTO organization(name, description, contact_email, logo_filename)
+    VALUES ($1, $2, $3, $4)
+    RETURNING organization_id
+  `;
+
+  const queryParams = [name, description, contactEmail, logoFilename];
+  const result = await db.query(query, queryParams);
+
+  if (result.rows.length === 0) {
+    throw new Error('Failed to create organization')
+  }
+
+  if (process.env.ENABLE_SQL_LOGGING === 'true') {
+    console.log('Created new organization with ID:', result.rows[0].organization_id);
+  }
+
+  return result.rows[0].organization_id;
+};
+
+const updateOrganization = async (organizationId, name, description, contactEmail, logoFilename) => {
+  const query = `
+    UPDATE organization
+    SET name = $1, description = $2, contact_email = $3, logo_filename = $4
+    WHERE organization_id = $5
+    RETURNING organization_id;
+  `;
+
+  const queryParams = [name, description, contactEmail, logoFilename, organizationId];
+  const result = await db.query(query, queryParams);
+
+  if (result.rows.length === 0) {
+    throw new Error('Organization not found');
+  }
+
+  if (process.env.ENABLE_SQL_LOGGING === 'true') {
+    console.log('Update organization with ID:', organizationId);
+  }
+
+  return result.rows[0].organization_id;
+}
+
 // EXPORTA LAS FUNCIONES DEL MODELO PARA PODER USARLAS EN OTRAS PARTES DE LA APLICACION (EJ. CONTROLADORES)
-export { getAllOrganizations, getOrganizationDetails };
+export { getAllOrganizations, getOrganizationDetails, createOrganization, updateOrganization };

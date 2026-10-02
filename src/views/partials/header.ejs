@@ -15,5 +15,18 @@
         <li><a href="/categories">Categories</a></li>
       </ul>
     </nav>
-  </body>
-</html>
+
+    <% const messages = flash(); %>
+    <% console.log('Mensajes leídos en la vista:', messages); %>
+
+    <% Object.keys(messages).forEach(type => { %>
+      <% if (messages[type].length > 0) { %>
+        <div class="flash-messages">
+          <% messages[type].forEach(msg => { %>
+            <div class="alert <%= type %>">
+              <%= msg %>
+            </div>
+          <% }); %>
+        </div>
+      <% } %>
+    <% }); %>
