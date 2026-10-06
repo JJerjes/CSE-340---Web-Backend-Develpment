@@ -18,8 +18,10 @@
     </section>
   <% } %>
 
-  <a href="/edit-project/<%= projectId %>" class="btn">Edit Project</a>
-  <a href="/assign-categories/<%= projectId %>">Edit Categories</a>
+  <% if (user && user.role_name === 'admin') { %>
+    <a href="/edit-project/<%= projectId %>" class="btn">Edit Project</a>
+    <a href="/assign-categories/<%= projectId %>">Edit Categories</a>
+  <% } %>
 
    <h1><%= project.title %></h1>
 

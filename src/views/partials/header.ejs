@@ -13,11 +13,18 @@
         <li><a href="/organizations">Organizations</a></li>
         <li><a href="/projects">Projects</a></li>
         <li><a href="/categories">Categories</a></li>
+
+        <% if (isLoggedIn) { %>
+          <li><a href="/logout">Logout</a></li>
+        <% } else { %>
+          <li><a href="/register">Register</a></li>
+          <li><a href="/login">Login</a></li>
+        <% } %>
       </ul>
     </nav>
 
     <% const messages = flash(); %>
-    <% console.log('Mensajes leídos en la vista:', messages); %>
+    <% console.log('Messages read in the view:', messages); %>
 
     <% Object.keys(messages).forEach(type => { %>
       <% if (messages[type].length > 0) { %>
@@ -30,3 +37,5 @@
         </div>
       <% } %>
     <% }); %>
+
+    
