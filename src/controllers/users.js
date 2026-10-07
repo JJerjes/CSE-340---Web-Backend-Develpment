@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import {
   createUser,
-  authenticateUser
+  authenticateUser,
+  getAllUsers
 } from '../models/users.js';
  
 import { param } from 'express-validator';
@@ -91,7 +92,7 @@ const requireRole = (role) => {
 
     if (req.session.user.role_name !== role) {
       req.flash('error', 'You do not have permission to access that page.');
-      return res.redirect('/');
+      return res.redirect('/dashboard');
     }
     next();
   };
@@ -106,6 +107,19 @@ const showDashboard = async (req, res) => {
   });
 };
 
+const getUsersPage = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.render('users', {
+      title: 'User Management',
+      users
+    });
+  } catch (error) {
+    console.error('Error loading users page:', error);
+    res.status(500).send('Server Error');
+  }
+};
+
 export {
   showUserRegistrationForm,
   processUserRegistrationForm,
@@ -114,7 +128,8 @@ export {
   processLogout,
   requireLogin,
   showDashboard,
-  requireRole
+  requireRole,
+  getUsersPage
 };
 
 
