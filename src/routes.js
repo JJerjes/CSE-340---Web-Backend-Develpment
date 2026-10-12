@@ -22,7 +22,9 @@ import {
   processNewProjectForm,
   projectValidation,
   showEditProjectForm,
-  processEditProjectForm
+  processEditProjectForm,
+  processVolunteerProject,
+  processWithdrawVolunteer
 } from './controllers/projects.js';
 
 import {
@@ -111,8 +113,10 @@ router.get('/logout', processLogout);
 
 // Protected dashboard route
 router.get('/dashboard', requireLogin, showDashboard);
-
 router.get('/users', requireLogin, requireRole('admin'), getUsersPage);
+
+router.post('/project/:id/volunteer', requireLogin, processVolunteerProject);
+router.post('/project/:id/withdraw', requireLogin, processWithdrawVolunteer);
 
 // error-handling routes
 router.get('/test-error', testErrorPage);

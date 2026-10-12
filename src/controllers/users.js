@@ -4,6 +4,8 @@ import {
   authenticateUser,
   getAllUsers
 } from '../models/users.js';
+
+import { getVolunteeredProjectsByUser } from '../models/projects.js';
  
 import { param } from 'express-validator';
 
@@ -98,13 +100,22 @@ const requireRole = (role) => {
   };
 };
 
-const showDashboard = async (req, res) => {
-  const user = req.session.user;
-  res.render('dashboard', {
-    title: 'Dashboard',
-    name: user.name,
-    email: user.email
-  });
+const showDashboard = async (req, res, next) => {
+  try {
+    const userId = req.session.user.user_id;
+
+    // Obtener la lista de proyectos en los que el usuario participa
+    const volunteeredProjects = await getVolunteeredProjectsByUser(userId);
+
+    res.render('dashboard', {
+      title: 'User Dashboard',
+      user: req.session.user,
+      volunteeredProjects
+    });
+  } catch (error) {
+    console.error('Error loading dashboard:', error);
+    next(error);
+  }
 };
 
 const getUsersPage = async (req, res) => {

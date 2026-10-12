@@ -29,6 +29,26 @@
   <p><strong>Location:</strong> <%= project.location %></p>
   <p><strong>Date:</strong> <%= new Date(project.project_date).toLocaleDateString() %></p>
 
+  <div class="volunteer-section mt-4" style="margin-top: 20px;">
+    <% if (locals.user) { %>
+      <% if (isVolunteered) { %>
+        <!-- CASO 1: El usuario ya está inscrito como voluntario -->
+        <p style="color: green; font-weight: bold;">✅ You are currently volunteering for this project.</p>
+        <form action="/project/<%= projectId %>/withdraw" method="POST">
+          <button type="submit" class="btn btn-danger" style="background-color: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Cancel Volunteering</button>
+        </form>
+      <% } else { %>
+        <!-- CASO 2: El usuario ha iniciado sesión pero aún no se inscribe -->
+        <form action="/project/<%= projectId %>/volunteer" method="POST">
+          <button type="submit" class="btn btn-primary" style="background-color: #007bff; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Volunteer for this Project</button>
+        </form>
+      <% } %>
+    <% } else { %>
+      <!-- CASO 3: El usuario es un visitante anónimo (no ha iniciado sesión) -->
+      <p>Please <a href="/login">Log in</a> to sign up as a volunteer for this project.</p>
+    <% } %>
+  </div>
+
 </main>
 
 <%- include('partials/footer') %>

@@ -8,7 +8,10 @@ import {
   getAllProjects,
   getProjectDetails,
   createProject,
-  updateProject
+  updateProject,
+  isUserVolunteered,
+  addVolunteer,
+  removeVolunteer
 
 } from '../models/projects.js';
 
@@ -57,14 +60,20 @@ const showProjectsPage = async (req, res, next) => {
 const showProjectDetailPage = async (req, res, next) => {
   try {
     const projectId = req.params.id;
+    const userId = req.session.user ? req.session.user.user_id : null;
 
     const project = await getProjectDetails(projectId);
+
+    if (!project) {
+      return res.status(404).send('project not found');
+    }
     
-    // Obtener las categorías asociadas al proyecto usando el modelo
     const categories = await getCategoriesByProjectId(projectId);
     
-    if (!project) {
-      return res.status(404).send('Project not found');
+    // Verificar si el usuario actual es voluntario (pasando user_id y project_id)
+    let isVolunteered = false;
+    if (userId) {
+      isVolunteered = await isUserVolunteered(userId, projectId);
     }
     // Nota: Si ya tenías una función para obtener el detalle del proyecto por ID, la llamas aquí.
     // Pasamos el título, los datos del proyecto y el arreglo de categorías a la vista.
@@ -72,7 +81,8 @@ const showProjectDetailPage = async (req, res, next) => {
       title: 'Project Details',
       project,
       projectId,
-      categories
+      categories,
+      isVolunteered
     });
   } catch (error) {
     next(error);
@@ -157,6 +167,36 @@ const processEditProjectForm = async (req, res, next) => {
   }
 }
 
+const processVolunteerProject = async (req, res, next) => {
+  try {
+    const projectId = req.params.id;
+    const userId = req.session.user.user_id;
+
+    await addVolunteer(userId, projectId);
+    req.flash('success', 'You have successfully volunteered for this project!');
+    res.redirect(`/project/${projectId}`);
+  } catch (error) {
+    console.error('Error volunteering for project:', error);
+    req.flash('error', 'Could not complete volunteer registration.');
+    res.redirect(`/project/${req.params.id}`);
+  }
+};
+
+const processWithdrawVolunteer = async (req, res, next) => {
+  try {
+    const projectId = req.params.id;
+    const userId = req.session.user.user_id;
+
+    await removeVolunteer(userId, projectId);
+    req.flash('success', 'You have withdrawn from this project.');
+    res.redirect(`/project/${projectId}`);
+  } catch (error) {
+    console.error('Error withdrawing from project:', error);
+    req.flash('error', 'Could not remove volunteer registration.');
+    res.redirect(`/project/${req.params.id}`);
+  }
+}
+
 // Export any controller functions
 export {
   showProjectsPage,
@@ -165,5 +205,7 @@ export {
   processNewProjectForm,
   projectValidation,
   showEditProjectForm,
-  processEditProjectForm
+  processEditProjectForm,
+  processVolunteerProject,
+  processWithdrawVolunteer  
 };

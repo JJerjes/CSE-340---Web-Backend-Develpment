@@ -176,3 +176,11 @@ CREATE TABLE IF NOT EXISTS users (
   role_id INTEGER REFERENCES roles(role_id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS project_volunteers (
+  user_id INT NOT NULL,
+  project_id INT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, project_id),
+  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES service_project(project_id) ON DELETE CASCADE
+);
